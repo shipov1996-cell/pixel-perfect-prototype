@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AchievementsRouteImport } from './routes/achievements'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as HabitsIndexRouteImport } from './routes/habits.index'
 import { Route as HabitsIdRouteImport } from './routes/habits.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AchievementsRoute = AchievementsRouteImport.update({
+  id: '/achievements',
+  path: '/achievements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HabitsIndexRoute = HabitsIndexRouteImport.update({
@@ -31,30 +49,50 @@ const HabitsIdRoute = HabitsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/achievements': typeof AchievementsRoute
+  '/settings': typeof SettingsRoute
+  '/stats': typeof StatsRoute
   '/habits/$id': typeof HabitsIdRoute
   '/habits/': typeof HabitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/achievements': typeof AchievementsRoute
+  '/settings': typeof SettingsRoute
+  '/stats': typeof StatsRoute
   '/habits/$id': typeof HabitsIdRoute
   '/habits': typeof HabitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/achievements': typeof AchievementsRoute
+  '/settings': typeof SettingsRoute
+  '/stats': typeof StatsRoute
   '/habits/$id': typeof HabitsIdRoute
   '/habits/': typeof HabitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/habits/$id' | '/habits/'
+  fullPaths:
+    '/' | '/achievements' | '/settings' | '/stats' | '/habits/$id' | '/habits/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/habits/$id' | '/habits'
-  id: '__root__' | '/' | '/habits/$id' | '/habits/'
+  to: '/' | '/achievements' | '/settings' | '/stats' | '/habits/$id' | '/habits'
+  id:
+    | '__root__'
+    | '/'
+    | '/achievements'
+    | '/settings'
+    | '/stats'
+    | '/habits/$id'
+    | '/habits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AchievementsRoute: typeof AchievementsRoute
+  SettingsRoute: typeof SettingsRoute
+  StatsRoute: typeof StatsRoute
   HabitsIdRoute: typeof HabitsIdRoute
   HabitsIndexRoute: typeof HabitsIndexRoute
 }
@@ -66,6 +104,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/achievements': {
+      id: '/achievements'
+      path: '/achievements'
+      fullPath: '/achievements'
+      preLoaderRoute: typeof AchievementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/habits/': {
@@ -87,6 +146,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AchievementsRoute: AchievementsRoute,
+  SettingsRoute: SettingsRoute,
+  StatsRoute: StatsRoute,
   HabitsIdRoute: HabitsIdRoute,
   HabitsIndexRoute: HabitsIndexRoute,
 }
