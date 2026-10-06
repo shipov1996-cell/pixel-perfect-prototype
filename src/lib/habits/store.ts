@@ -1,10 +1,10 @@
 import { useSyncExternalStore } from "react";
-import { subDays } from "date-fns";
 import type { AppState, Habit, Settings } from "./types";
 import { overallStats, toKey, todayDate } from "./logic";
 import { ACHIEVEMENTS } from "./achievements";
 
-const KEY = "habitflow:v1";
+const KEY = "habitflow:v2"; // v1 contained sample data; v2 starts empty
+import { toast } from "sonner";
 
 const defaultSettings: Settings = {
   name: "",
@@ -17,29 +17,6 @@ const defaultSettings: Settings = {
 
 const emptyState: AppState = { version: 1, habits: [], completions: {}, achievements: {}, settings: defaultSettings };
 
-function seed(): AppState {
-  const today = new Date();
-  const start = toKey(subDays(today, 20));
-  const mk = (i: number, p: Partial<Habit>): Habit => ({
-    id: crypto.randomUUID(), name: "", icon: "Target", color: "coral", description: "", category: "Health",
-    frequency: { type: "daily" }, target: 1, unit: "", reminder: { enabled: false, time: "08:00" },
-    startDate: start, archived: false, createdAt: new Date().toISOString(), order: i, ...p,
-  });
-  const habits = [
-    mk(0, { name: "Drink water", icon: "Droplets", color: "blue", target: 8, unit: "glasses", category: "Health" }),
-    mk(1, { name: "Morning workout", icon: "Dumbbell", color: "coral", category: "Fitness", frequency: { type: "weekdays", days: [1, 3, 5] } }),
-    mk(2, { name: "Read 20 pages", icon: "BookOpen", color: "amber", category: "Study" }),
-    mk(3, { name: "Meditate", icon: "Brain", color: "teal", category: "Personal", reminder: { enabled: true, time: "07:30" } }),
-  ];
-  const completions: AppState["completions"] = {};
-  habits.forEach((h, hi) => {
-    completions[h.id] = {};
-    for (let i = 1; i <= 20; i++) {
-      if ((i * 7 + hi * 3) % 10 < 7) completions[h.id]![toKey(subDays(today, i))] = h.target;
-    }
-  });
-  return { ...emptyState, habits, completions };
-}
 
 let state: AppState = emptyState;
 let hydrated = false;
@@ -49,7 +26,8 @@ let unlockListener: ((ids: string[]) => void) | null = null;
 function emit() { listeners.forEach((l) => l()); }
 
 function persist() {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* ignore */ }
+  try { localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch { toast.error("Couldn't save your changes. Your browser storage may be full or disabled."); }
 }
 
 function set(updater: (s: AppState) => AppState) {
@@ -72,9 +50,13 @@ export function hydrate() {
   if (hydrated) return;
   try {
     const raw = localStorage.getItem(KEY);
-    state = raw ? { ...emptyState, ...JSON.parse(raw) } : seed();
+    state = raw ? { ...emptyState, ...JSON.parse(raw) } : emptyState;
     state.settings = { ...defaultSettings, ...state.settings };
-  } catch { state = seed(); }
+    localStorage.removeItem("habitflow:v1");
+  } catch {
+    state = emptyState;
+    toast.error("Your saved data couldn't be read, so HabitFlow started fresh.");
+  }
   checkAchievements();
   hydrated = true;
   persist();
@@ -96,6 +78,19 @@ export const getState = () => state;
 // ---------- Actions (also the surface a future AI agent will call) ----------
 export type HabitInput = Omit<Habit, "id" | "createdAt" | "order" | "archived">;
 
+export function validateHabit(h: Partial<HabitInput>): string | null {
+  const name = (h.name ?? "").trim();
+  if (!name) return "Please give your habit a name.";
+  if (name.length > 60) return "Habit name must be 60 characters or fewer.";
+  if ((h.description ?? "").length > 300) return "Description must be 300 characters or fewer.";
+  if (!Number.isInteger(h.target) || (h.target ?? 0) < 1 || (h.target ?? 0) > 1000) return "Daily target must be a whole number between 1 and 1000.";
+  if (h.frequency?.type === "weekdays" && h.frequency.days.length === 0) return "Pick at least one day of the week.";
+  if (h.frequency?.type === "custom" && (!Number.isInteger(h.frequency.interval) || h.frequency.interval < 1 || h.frequency.interval > 365)) return "Repeat interval must be between 1 and 365 days.";
+  if (h.startDate && !/^\d{4}-\d{2}-\d{2}$/.test(h.startDate)) return "Please choose a valid start date.";
+  if (h.reminder?.enabled && !/^\d{2}:\d{2}$/.test(h.reminder.time)) return "Please choose a valid reminder time.";
+  return null;
+}
+
 export const actions = {
   createHabit(input: HabitInput): Habit {
     const habit: Habit = { ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString(), archived: false, order: state.habits.length };
@@ -114,6 +109,11 @@ export const actions = {
     });
   },
   setAmount(id: string, dateKey: string, amount: number) {
+    const h = state.habits.find((x) => x.id === id);
+    if (!h) { toast.error("That habit no longer exists."); return; }
+    if (dateKey > toKey(todayDate(state.settings.dayStartHour))) { toast.error("You can't log future days."); return; }
+    if (dateKey < h.startDate) { toast.error("That day is before this habit started."); return; }
+    amount = Math.min(h.target, Math.max(0, Math.round(amount)));
     set((s) => ({ ...s, completions: { ...s.completions, [id]: { ...s.completions[id], [dateKey]: Math.max(0, amount) } } }));
   },
   /** One-tap: increments toward target; when complete, resets to 0. Returns true if now complete. */
@@ -128,8 +128,9 @@ export const actions = {
   updateSettings(patch: Partial<Settings>) { set((s) => ({ ...s, settings: { ...s.settings, ...patch } })); },
   exportData: () => JSON.stringify(state, null, 2),
   importData(json: string) {
-    const parsed = JSON.parse(json) as AppState;
-    if (!Array.isArray(parsed.habits)) throw new Error("Invalid file");
+    let parsed: AppState;
+    try { parsed = JSON.parse(json); } catch { throw new Error("That file isn't valid JSON."); }
+    if (!parsed || !Array.isArray(parsed.habits) || typeof parsed.completions !== "object") throw new Error("That file isn't a HabitFlow backup.");
     set(() => ({ ...emptyState, ...parsed, settings: { ...defaultSettings, ...parsed.settings } }));
   },
   reset() { set(() => ({ ...emptyState, settings: state.settings })); },
