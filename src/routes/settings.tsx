@@ -63,7 +63,8 @@ function SettingsPage() {
 
   const importData = async (file: File) => {
     try { actions.importData(await file.text()); toast.success("Data imported"); }
-    catch { toast.error("That file couldn't be imported"); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "That file couldn't be imported."); }
+    finally { if (fileRef.current) fileRef.current.value = ""; }
   };
 
   return (

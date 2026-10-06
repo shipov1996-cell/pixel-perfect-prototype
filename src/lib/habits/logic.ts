@@ -59,8 +59,11 @@ export function habitRate(s: AppState, h: Habit, today: Date, days?: number) {
   return { due, done, rate: due ? done / due : 0 };
 }
 
-export const totalCompletions = (s: AppState, h: Habit) =>
-  Object.values(s.completions[h.id] ?? {}).filter((v) => v >= h.target).length;
+/** Completed days within [startDate, today]; never counts future dates. */
+export const totalCompletions = (s: AppState, h: Habit, today: Date = new Date()) => {
+  const max = toKey(today);
+  return Object.entries(s.completions[h.id] ?? {}).filter(([k, v]) => k <= max && k >= h.startDate && v >= h.target).length;
+};
 
 export const activeHabits = (s: AppState) =>
   s.habits.filter((h) => !h.archived).sort((a, b) => a.order - b.order);
