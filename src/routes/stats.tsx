@@ -22,7 +22,7 @@ export const Route = createFileRoute("/stats")({
 
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 
-function Tile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
+function Tile({ icon, label, value }: { icon: import("react").ReactNode; label: string; value: string | number }) {
   return (
     <div className="card-surface p-4">
       <div className="mb-3 grid size-9 place-items-center rounded-xl bg-primary-soft text-primary">{icon}</div>

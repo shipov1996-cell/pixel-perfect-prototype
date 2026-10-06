@@ -41,12 +41,16 @@ function Today() {
   const week = weekDays(today, s.settings.weekStartsMonday);
   const message = p.due === 0 ? "Nothing scheduled" : p.done === p.due ? "Perfect day! 🎉" : p.done === 0 ? "Let's get started" : "Keep the flow going";
 
+  const left = p.due - p.done;
+  const subtitle = p.due === 0 ? "Rest, reflect, recharge." : left === 0 ? "Everything done. You showed up today." : p.done === 0 ? "Small steps, every day." : `Only ${left} to go — you've got this.`;
+
   return (
     <div className="space-y-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-muted-foreground">{format(new Date(), "EEEE, MMMM d")}</p>
           <h1 className="truncate text-3xl font-bold sm:text-4xl">{greeting(new Date().getHours())}{s.settings.name ? `, ${s.settings.name}` : ""}</h1>
+          <p className="mt-1 truncate text-sm text-muted-foreground">{subtitle}</p>
         </div>
         <Button size="icon" onClick={() => setOpen(true)} aria-label="Add habit" className="size-12 rounded-full shadow-float">
           <Plus className="size-6" />
@@ -98,6 +102,12 @@ function Today() {
           ))
         )}
       </section>
+      {sorted.length > 0 && (
+        <div className="flex items-center justify-between rounded-2xl bg-muted px-4 py-3 text-sm">
+          <span className="font-semibold">{p.done === p.due ? "Day complete 🎉" : `${left} habit${left === 1 ? "" : "s"} left today`}</span>
+          <span className="font-bold text-primary">{p.done} of {p.due} · {Math.round(p.rate * 100)}%</span>
+        </div>
+      )}
       <HabitForm open={open} onOpenChange={setOpen} />
     </div>
   );
