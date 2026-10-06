@@ -7,7 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import type { Category, Habit, HabitColor } from "@/lib/habits/types";
 import { COLORS, HABIT_ICON_CHOICES, HabitIcon, colorVar } from "@/lib/habits/icons";
-import { actions, type HabitInput } from "@/lib/habits/store";
+import { actions, validateHabit, type HabitInput } from "@/lib/habits/store";
+import { toast } from "sonner";
 import { DOW, toKey } from "@/lib/habits/logic";
 import { cn } from "@/lib/utils";
 
@@ -40,14 +41,22 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 export function HabitForm({ open, onOpenChange, habit }: { open: boolean; onOpenChange: (o: boolean) => void; habit?: Habit }) {
   const [f, setF] = useState<HabitInput>(blank);
   useEffect(() => { if (open) setF(habit ? { ...habit } : blank()); }, [open, habit]);
-  const up = (p: Partial<HabitInput>) => setF((x) => ({ ...x, ...p }));
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => { if (open) setError(null); }, [open]);
+  const up = (p: Partial<HabitInput>) => { setError(null); setF((x) => ({ ...x, ...p })); };
   const c = colorVar(f.color);
 
   const save = () => {
-    if (!f.name.trim()) return;
-    const data = { ...f, name: f.name.trim(), target: Math.max(1, f.target || 1) };
-    if (habit) actions.updateHabit(habit.id, data); else actions.createHabit(data);
-    onOpenChange(false);
+    const data = { ...f, name: f.name.trim(), description: f.description.trim(), unit: f.unit.trim() };
+    const err = validateHabit(data);
+    if (err) { setError(err); return; }
+    try {
+      if (habit) actions.updateHabit(habit.id, data); else actions.createHabit(data);
+      toast.success(habit ? "Habit updated" : `“${data.name}” added`);
+      onOpenChange(false);
+    } catch {
+      setError("Something went wrong saving this habit. Please try again.");
+    }
   };
 
   return (
@@ -62,7 +71,7 @@ export function HabitForm({ open, onOpenChange, habit }: { open: boolean; onOpen
             <div className="grid size-14 shrink-0 place-items-center rounded-2xl" style={{ background: `color-mix(in oklab, ${c} 16%, transparent)`, color: c }}>
               <HabitIcon name={f.icon} className="size-7" />
             </div>
-            <Input autoFocus value={f.name} onChange={(e) => up({ name: e.target.value })} placeholder="e.g. Drink water" className="h-14 rounded-2xl text-lg font-semibold" />
+            <Input autoFocus value={f.name} onChange={(e) => up({ name: e.target.value })} placeholder="e.g. Drink water" maxLength={60} aria-invalid={!!error && !f.name.trim()} className="h-14 rounded-2xl text-lg font-semibold" />
           </div>
 
           {!habit && !f.name && (
@@ -139,7 +148,7 @@ export function HabitForm({ open, onOpenChange, habit }: { open: boolean; onOpen
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Daily target</Label>
-              <Input type="number" min={1} value={f.target} onChange={(e) => up({ target: +e.target.value })} className="h-11 rounded-xl" />
+              <Input type="number" min={1} value={f.target} min={1} max={1000} step={1} onChange={(e) => up({ target: e.target.value === "" ? 0 : Math.floor(+e.target.value) })} className="h-11 rounded-xl" />
             </div>
             <div>
               <Label>Unit</Label>
@@ -166,7 +175,8 @@ export function HabitForm({ open, onOpenChange, habit }: { open: boolean; onOpen
             <Textarea value={f.description} onChange={(e) => up({ description: e.target.value })} placeholder="Why does this matter to you?" className="rounded-xl" />
           </div>
 
-          <Button type="submit" disabled={!f.name.trim()} className="h-14 w-full rounded-2xl text-base font-bold">
+          {error && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">{error}</p>}
+          <Button type="submit" className="h-14 w-full rounded-2xl text-base font-bold">
             {habit ? "Save changes" : "Add habit"}
           </Button>
         </form>

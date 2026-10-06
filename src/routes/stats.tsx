@@ -35,8 +35,9 @@ function Tile({ icon, label, value }: { icon: import("react").ReactNode; label: 
 function Stats() {
   const s = useAppState();
   const today = todayDate(s.settings.dayStartHour);
-  if (!s.habits.length) {
-    return (<><PageHeader title="Statistics" /><EmptyState icon={<BarChart3 className="size-8" />} title="No data yet" text="Complete a few habits and your progress will appear here." /></>);
+  const hasData = s.habits.some((h) => Object.values(s.completions[h.id] ?? {}).some((v) => v > 0));
+  if (!hasData) {
+    return (<><PageHeader title="Statistics" /><EmptyState icon={<BarChart3 className="size-8" />} title={s.habits.length ? "No completions yet" : "No habits yet"} text={s.habits.length ? "Complete a habit on the Today screen and your charts will start filling in." : "Create a habit and complete it — your progress will appear here."} /></>);
   }
   const st = overallStats(s, today);
   const week = weekDays(today, s.settings.weekStartsMonday).map((d) => ({ name: format(d, "EEE"), rate: d > today ? 0 : Math.round(dayProgress(s, d).rate * 100) }));
