@@ -148,7 +148,7 @@ export function HabitForm({ open, onOpenChange, habit }: { open: boolean; onOpen
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Daily target</Label>
-              <Input type="number" min={1} value={f.target} min={1} max={1000} step={1} onChange={(e) => up({ target: e.target.value === "" ? 0 : Math.floor(+e.target.value) })} className="h-11 rounded-xl" />
+              <Input type="number" value={f.target || ""} min={1} max={1000} step={1} onChange={(e) => up({ target: e.target.value === "" ? 0 : Math.floor(+e.target.value) })} className="h-11 rounded-xl" />
             </div>
             <div>
               <Label>Unit</Label>
