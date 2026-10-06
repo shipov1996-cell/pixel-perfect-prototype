@@ -55,10 +55,10 @@ function HabitDetail() {
   const week = habitRate(s, h, today, 7);
   const monthR = habitRate(s, h, today, 30);
   const weeksData = Array.from({ length: 8 }, (_, i) => {
-    const end = subDays(today, (7 - i) * 7);
+    const start = subDays(today, (7 - i) * 7 + 6);
     let done = 0;
-    for (let d = 0; d < 7; d++) if (isDone(s, h, toKey(subDays(end, -d - 1 + 7 - 6)))) done++;
-    return { name: format(subDays(end, -7), "MMM d"), done };
+    for (let d = 0; d < 7; d++) if (isDone(s, h, toKey(subDays(start, -d)))) done++;
+    return { name: format(start, "MMM d"), done };
   });
   const history = Object.entries(s.completions[h.id] ?? {}).filter(([, v]) => v > 0).sort(([a], [b]) => b.localeCompare(a)).slice(0, 14);
 

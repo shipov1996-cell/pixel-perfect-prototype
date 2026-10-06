@@ -35,7 +35,7 @@ function seed(): AppState {
   habits.forEach((h, hi) => {
     completions[h.id] = {};
     for (let i = 1; i <= 20; i++) {
-      if ((i * 7 + hi * 3) % 10 < 7) completions[h.id][toKey(subDays(today, i))] = h.target;
+      if ((i * 7 + hi * 3) % 10 < 7) completions[h.id]![toKey(subDays(today, i))] = h.target;
     }
   });
   return { ...emptyState, habits, completions };

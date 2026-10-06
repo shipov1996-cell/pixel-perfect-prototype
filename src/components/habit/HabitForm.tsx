@@ -26,10 +26,10 @@ const blank = (): HabitInput => ({
   target: 1, unit: "", reminder: { enabled: false, time: "08:00" }, startDate: toKey(new Date()),
 });
 
-function Label({ children }: { children: React.ReactNode }) {
+function Label({ children }: { children: import("react").ReactNode }) {
   return <div className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">{children}</div>;
 }
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: import("react").ReactNode }) {
   return (
     <button type="button" onClick={onClick} className={cn("h-10 rounded-full px-4 text-sm font-semibold transition-colors", active ? "bg-foreground text-background" : "bg-muted text-foreground hover:bg-accent")}>
       {children}

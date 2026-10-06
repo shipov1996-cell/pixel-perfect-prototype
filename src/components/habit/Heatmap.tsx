@@ -36,7 +36,7 @@ export function MonthHeatmap({ month, today, valueFor, color, mondayFirst = true
   month: Date; today: Date; valueFor: (d: Date) => number; color: string; mondayFirst?: boolean;
 }) {
   const days = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) });
-  const offset = (getDay(days[0]) - (mondayFirst ? 1 : 0) + 7) % 7;
+  const offset = (getDay(days[0]!) - (mondayFirst ? 1 : 0) + 7) % 7;
   const labels = mondayFirst ? ["M", "T", "W", "T", "F", "S", "S"] : ["S", "M", "T", "W", "T", "F", "S"];
   return (
     <div className="grid grid-cols-7 gap-1.5 text-center">

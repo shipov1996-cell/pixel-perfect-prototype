@@ -1,6 +1,6 @@
 export function ProgressRing({
   value, size = 140, stroke = 12, color = "var(--primary)", children,
-}: { value: number; size?: number; stroke?: number; color?: string; children?: React.ReactNode }) {
+}: { value: number; size?: number; stroke?: number; color?: string; children?: import("react").ReactNode }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   return (

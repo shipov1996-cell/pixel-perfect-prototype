@@ -80,13 +80,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         {ready ? children : <div className="space-y-4 pt-4">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-3xl bg-muted" />)}</div>}
       </main>
 
-      <nav className="glass pb-safe fixed inset-x-0 bottom-0 z-40 border-t md:hidden">
-        <div className="mx-auto grid max-w-md grid-cols-5 px-2 pt-2">
+      <nav aria-label="Main" className="glass pb-safe fixed inset-x-0 bottom-0 z-40 border-t md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-5 px-1 pt-1.5">
           {NAV.map(({ to, label, icon: I }) => (
             <Link key={to} to={to} activeOptions={{ exact: to === "/" }}
-              className="flex flex-col items-center gap-1 py-1 text-[11px] font-semibold text-muted-foreground transition-colors"
-              activeProps={{ className: "text-primary" }}>
-              <I className="size-6" strokeWidth={2.2} />{label}
+              className="group flex min-h-14 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-muted-foreground transition-colors active:scale-95 data-[status=active]:text-primary">
+              <span className="grid h-8 w-12 place-items-center rounded-full transition-colors group-data-[status=active]:bg-primary-soft">
+                <I className="size-[22px]" strokeWidth={2.2} />
+              </span>
+              {label === "Awards" ? "Achievements" : label}
             </Link>
           ))}
         </div>

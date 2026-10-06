@@ -95,8 +95,8 @@ export function overallStats(s: AppState, today: Date) {
   for (let i = 0; i < 84; i++) {
     const d = subDays(today, i);
     const p = dayProgress(s, d);
-    byDow[d.getDay()].due += p.due;
-    byDow[d.getDay()].done += p.done;
+    byDow[d.getDay()]!.due += p.due;
+    byDow[d.getDay()]!.done += p.done;
   }
   const dowRates = byDow.map((x, i) => ({ dow: i, rate: x.due ? x.done / x.due : -1 }));
   const valid = dowRates.filter((x) => x.rate >= 0);

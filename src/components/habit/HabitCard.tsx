@@ -5,6 +5,7 @@ import type { Habit } from "@/lib/habits/types";
 import { HabitIcon, colorVar } from "@/lib/habits/icons";
 import { actions } from "@/lib/habits/store";
 import { cn } from "@/lib/utils";
+import { frequencyLabel } from "@/lib/habits/logic";
 
 export function HabitCard({ habit, amount, streak, dateKey, index = 0 }: {
   habit: Habit; amount: number; streak: number; dateKey: string; index?: number;
@@ -39,7 +40,7 @@ export function HabitCard({ habit, amount, streak, dateKey, index = 0 }: {
               <Flame className="size-3.5" />{streak}
             </span>
             <span>·</span>
-            <span className="truncate">{habit.target > 1 ? `${amount}/${habit.target} ${habit.unit}` : done ? "Done" : habit.category}</span>
+            <span className="truncate">{habit.target > 1 ? `${amount}/${habit.target} ${habit.unit}` : frequencyLabel(habit)}</span>
           </div>
           {habit.target > 1 && (
             <div className="mt-2 flex gap-1">
