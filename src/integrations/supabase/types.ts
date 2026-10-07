@@ -14,7 +14,252 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          description: string
+          icon: string
+          id: string
+          sort_order: number
+          title: string
+          xp: number
+        }
+        Insert: {
+          description: string
+          icon: string
+          id: string
+          sort_order?: number
+          title: string
+          xp?: number
+        }
+        Update: {
+          description?: string
+          icon?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      habit_completions: {
+        Row: {
+          amount: number
+          completed_on: string
+          created_at: string
+          habit_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          completed_on: string
+          created_at?: string
+          habit_id: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          completed_on?: string
+          created_at?: string
+          habit_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_completions_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          archived: boolean
+          category: string
+          color: string
+          created_at: string
+          description: string
+          frequency_type: string
+          icon: string
+          id: string
+          interval_days: number
+          name: string
+          sort_order: number
+          start_date: string
+          target: number
+          unit: string
+          updated_at: string
+          user_id: string
+          weekdays: number[]
+        }
+        Insert: {
+          archived?: boolean
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string
+          frequency_type?: string
+          icon?: string
+          id?: string
+          interval_days?: number
+          name: string
+          sort_order?: number
+          start_date?: string
+          target?: number
+          unit?: string
+          updated_at?: string
+          user_id?: string
+          weekdays?: number[]
+        }
+        Update: {
+          archived?: boolean
+          category?: string
+          color?: string
+          created_at?: string
+          description?: string
+          frequency_type?: string
+          icon?: string
+          id?: string
+          interval_days?: number
+          name?: string
+          sort_order?: number
+          start_date?: string
+          target?: number
+          unit?: string
+          updated_at?: string
+          user_id?: string
+          weekdays?: number[]
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          habit_id: string
+          id: string
+          remind_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          habit_id: string
+          id?: string
+          remind_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          habit_id?: string
+          id?: string
+          remind_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: true
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_settings: {
+        Row: {
+          created_at: string
+          daily_summary: boolean
+          day_start_hour: number
+          notifications: boolean
+          theme: string
+          updated_at: string
+          user_id: string
+          week_starts_monday: boolean
+        }
+        Insert: {
+          created_at?: string
+          daily_summary?: boolean
+          day_start_hour?: number
+          notifications?: boolean
+          theme?: string
+          updated_at?: string
+          user_id: string
+          week_starts_monday?: boolean
+        }
+        Update: {
+          created_at?: string
+          daily_summary?: boolean
+          day_start_hour?: number
+          notifications?: boolean
+          theme?: string
+          updated_at?: string
+          user_id?: string
+          week_starts_monday?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
