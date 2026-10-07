@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/habit/AppShell";
 import { ProgressRing } from "@/components/habit/ProgressRing";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/achievements")({
+export const Route = createFileRoute("/_authenticated/achievements")({
   head: () => ({
     meta: [
       { title: "Achievements — HabitFlow" },

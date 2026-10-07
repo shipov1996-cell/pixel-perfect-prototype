@@ -9,7 +9,7 @@ import { EmptyState, PageHeader } from "@/components/habit/AppShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/habits/")({
+export const Route = createFileRoute("/_authenticated/habits/")({
   head: () => ({
     meta: [
       { title: "Your habits — HabitFlow" },

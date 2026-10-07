@@ -8,7 +8,7 @@ import { HabitIcon, colorVar } from "@/lib/habits/icons";
 import { WeeksHeatmap } from "@/components/habit/Heatmap";
 import { EmptyState, PageHeader } from "@/components/habit/AppShell";
 
-export const Route = createFileRoute("/stats")({
+export const Route = createFileRoute("/_authenticated/stats")({
   head: () => ({
     meta: [
       { title: "Statistics — HabitFlow" },
