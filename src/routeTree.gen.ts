@@ -9,148 +9,150 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AchievementsRouteImport } from './routes/achievements'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as StatsRouteImport } from './routes/stats'
-import { Route as HabitsIndexRouteImport } from './routes/habits.index'
-import { Route as HabitsIdRouteImport } from './routes/habits.$id'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedAchievementsRouteImport } from './routes/_authenticated/achievements'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedStatsRouteImport } from './routes/_authenticated/stats'
+import { Route as AuthenticatedHabitsIndexRouteImport } from './routes/_authenticated/habits.index'
+import { Route as AuthenticatedHabitsIdRouteImport } from './routes/_authenticated/habits.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AchievementsRoute = AchievementsRouteImport.update({
-  id: '/achievements',
-  path: '/achievements',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
+const AuthenticatedAchievementsRoute =
+  AuthenticatedAchievementsRouteImport.update({
+    id: '/_authenticated/achievements',
+    path: '/achievements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/_authenticated/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StatsRoute = StatsRouteImport.update({
-  id: '/stats',
+const AuthenticatedStatsRoute = AuthenticatedStatsRouteImport.update({
+  id: '/_authenticated/stats',
   path: '/stats',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HabitsIndexRoute = HabitsIndexRouteImport.update({
-  id: '/habits/',
-  path: '/habits/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HabitsIdRoute = HabitsIdRouteImport.update({
-  id: '/habits/$id',
+const AuthenticatedHabitsIndexRoute =
+  AuthenticatedHabitsIndexRouteImport.update({
+    id: '/_authenticated/habits/',
+    path: '/habits/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedHabitsIdRoute = AuthenticatedHabitsIdRouteImport.update({
+  id: '/_authenticated/habits/$id',
   path: '/habits/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
-  '/settings': typeof SettingsRoute
-  '/stats': typeof StatsRoute
-  '/habits/$id': typeof HabitsIdRoute
-  '/habits/': typeof HabitsIndexRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/stats': typeof AuthenticatedStatsRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/habits/$id': typeof AuthenticatedHabitsIdRoute
+  '/habits/': typeof AuthenticatedHabitsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
-  '/settings': typeof SettingsRoute
-  '/stats': typeof StatsRoute
-  '/habits/$id': typeof HabitsIdRoute
-  '/habits': typeof HabitsIndexRoute
+  '/achievements': typeof AuthenticatedAchievementsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/stats': typeof AuthenticatedStatsRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/habits/$id': typeof AuthenticatedHabitsIdRoute
+  '/habits': typeof AuthenticatedHabitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
-  '/settings': typeof SettingsRoute
-  '/stats': typeof StatsRoute
-  '/habits/$id': typeof HabitsIdRoute
-  '/habits/': typeof HabitsIndexRoute
+  '/_authenticated/achievements': typeof AuthenticatedAchievementsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/stats': typeof AuthenticatedStatsRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/habits/$id': typeof AuthenticatedHabitsIdRoute
+  '/_authenticated/habits/': typeof AuthenticatedHabitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/achievements' | '/settings' | '/stats' | '/habits/$id' | '/habits/'
+    '/achievements' | '/settings' | '/stats' | '/' | '/habits/$id' | '/habits/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/achievements' | '/settings' | '/stats' | '/habits/$id' | '/habits'
+  to: '/achievements' | '/settings' | '/stats' | '/' | '/habits/$id' | '/habits'
   id:
     | '__root__'
-    | '/'
-    | '/achievements'
-    | '/settings'
-    | '/stats'
-    | '/habits/$id'
-    | '/habits/'
+    | '/_authenticated/achievements'
+    | '/_authenticated/settings'
+    | '/_authenticated/stats'
+    | '/_authenticated/'
+    | '/_authenticated/habits/$id'
+    | '/_authenticated/habits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AchievementsRoute: typeof AchievementsRoute
-  SettingsRoute: typeof SettingsRoute
-  StatsRoute: typeof StatsRoute
-  HabitsIdRoute: typeof HabitsIdRoute
-  HabitsIndexRoute: typeof HabitsIndexRoute
+  AuthenticatedAchievementsRoute: typeof AuthenticatedAchievementsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedStatsRoute: typeof AuthenticatedStatsRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedHabitsIdRoute: typeof AuthenticatedHabitsIdRoute
+  AuthenticatedHabitsIndexRoute: typeof AuthenticatedHabitsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/achievements': {
-      id: '/achievements'
+    '/_authenticated/achievements': {
+      id: '/_authenticated/achievements'
       path: '/achievements'
       fullPath: '/achievements'
-      preLoaderRoute: typeof AchievementsRouteImport
+      preLoaderRoute: typeof AuthenticatedAchievementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stats': {
-      id: '/stats'
+    '/_authenticated/stats': {
+      id: '/_authenticated/stats'
       path: '/stats'
       fullPath: '/stats'
-      preLoaderRoute: typeof StatsRouteImport
+      preLoaderRoute: typeof AuthenticatedStatsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/habits/': {
-      id: '/habits/'
+    '/_authenticated/habits/': {
+      id: '/_authenticated/habits/'
       path: '/habits'
       fullPath: '/habits/'
-      preLoaderRoute: typeof HabitsIndexRouteImport
+      preLoaderRoute: typeof AuthenticatedHabitsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/habits/$id': {
-      id: '/habits/$id'
+    '/_authenticated/habits/$id': {
+      id: '/_authenticated/habits/$id'
       path: '/habits/$id'
       fullPath: '/habits/$id'
-      preLoaderRoute: typeof HabitsIdRouteImport
+      preLoaderRoute: typeof AuthenticatedHabitsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AchievementsRoute: AchievementsRoute,
-  SettingsRoute: SettingsRoute,
-  StatsRoute: StatsRoute,
-  HabitsIdRoute: HabitsIdRoute,
-  HabitsIndexRoute: HabitsIndexRoute,
+  AuthenticatedAchievementsRoute: AuthenticatedAchievementsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedStatsRoute: AuthenticatedStatsRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedHabitsIdRoute: AuthenticatedHabitsIdRoute,
+  AuthenticatedHabitsIndexRoute: AuthenticatedHabitsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
