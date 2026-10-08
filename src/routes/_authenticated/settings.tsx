@@ -42,7 +42,7 @@ function SettingsPage() {
   const navigate = useNavigate();
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) return toast.error("Couldn't sign out. Please try again.");
+    if (error) { toast.error("Couldn't sign out. Please try again."); return; }
     navigate({ to: "/auth", replace: true });
   };
   const fileRef = useRef<HTMLInputElement>(null);
