@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && tsc --noEmit",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "deploy": "npm run build && wrangler deploy",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "start": "wrangler dev"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -98,6 +99,7 @@
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
     "vitest": "^4.1.10",
-    "wrangler": "^4.148.0"
+    "wrangler": "^4.148.0",
+    "@cloudflare/vite-plugin": "^1.63.0"
   }
 }
