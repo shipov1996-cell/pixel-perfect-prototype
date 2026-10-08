@@ -41,6 +41,66 @@ export type Database = {
         }
         Relationships: []
       }
+      app_errors: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          route: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          route?: string
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          route?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          target_id: string | null
+          target_type: string
+          user_id: string | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          target_id?: string | null
+          target_type?: string
+          user_id?: string | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          target_id?: string | null
+          target_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       habit_completions: {
         Row: {
           amount: number
@@ -144,18 +204,24 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          is_test_account: boolean
+          status: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           display_name?: string
           id: string
+          is_test_account?: boolean
+          status?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           display_name?: string
           id?: string
+          is_test_account?: boolean
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -227,6 +293,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_settings: {
         Row: {
           created_at: string
@@ -265,10 +352,61 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_analytics: { Args: never; Returns: Json }
+      admin_delete_user: { Args: { _uid: string }; Returns: undefined }
+      admin_list_users: {
+        Args: never
+        Returns: {
+          completions: number
+          created_at: string
+          display_name: string
+          email: string
+          habits: number
+          id: string
+          is_test_account: boolean
+          last_activity: string
+          last_sign_in_at: string
+          role: string
+          status: string
+        }[]
+      }
+      admin_overview: { Args: never; Returns: Json }
+      admin_set_admin: {
+        Args: { _make_admin: boolean; _uid: string }
+        Returns: undefined
+      }
+      admin_set_status: {
+        Args: { _status: string; _uid: string }
+        Returns: undefined
+      }
+      admin_set_test_flag: {
+        Args: { _flag: boolean; _uid: string }
+        Returns: undefined
+      }
+      admin_user_detail: { Args: { _uid: string }; Returns: Json }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      log_auth_event: { Args: { _event: string }; Returns: undefined }
+      my_role: { Args: never; Returns: string }
+      write_audit: {
+        Args: {
+          _event: string
+          _meta: Json
+          _tid: string
+          _ttype: string
+          _user: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -395,6 +533,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "admin", "user"],
+    },
   },
 } as const
