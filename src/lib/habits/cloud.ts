@@ -32,7 +32,7 @@ function habitToRow(h: Habit) {
   };
 }
 
-function check<T>(res: { error: { message: string } | null; data?: T }) {
+function check<T>(res: { error: { message: string } | null; data?: unknown }) {
   if (res.error) throw new Error(res.error.message);
   return res.data as T;
 }
