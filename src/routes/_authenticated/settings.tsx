@@ -1,7 +1,9 @@
 import { useRef, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, CalendarDays, Clock, Download, Info, Monitor, Moon, Sun, Trash2, Upload, User } from "lucide-react";
+import { LogOut, Bell, CalendarDays, Clock, Download, Info, Monitor, Moon, Sun, Trash2, Upload, User } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import { actions, useAppState } from "@/lib/habits/store";
 import type { ThemePref } from "@/lib/habits/types";
 import { PageHeader } from "@/components/habit/AppShell";
@@ -37,6 +39,12 @@ function Row({ icon, label, hint, children }: { icon: ReactNode; label: string; 
 
 function SettingsPage() {
   const { settings } = useAppState();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) { toast.error("Couldn't sign out. Please try again."); return; }
+    navigate({ to: "/auth", replace: true });
+  };
   const fileRef = useRef<HTMLInputElement>(null);
   const themes: { v: ThemePref; label: string; icon: ReactNode }[] = [
     { v: "light", label: "Light", icon: <Sun className="size-4" /> },
@@ -62,7 +70,7 @@ function SettingsPage() {
   };
 
   const importData = async (file: File) => {
-    try { actions.importData(await file.text()); toast.success("Data imported"); }
+    try { await actions.importData(await file.text()); toast.success("Data imported"); }
     catch (e) { toast.error(e instanceof Error ? e.message : "That file couldn't be imported."); }
     finally { if (fileRef.current) fileRef.current.value = ""; }
   };
@@ -121,19 +129,21 @@ function SettingsPage() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => { actions.reset(); toast("All data cleared"); }}>Reset</AlertDialogAction>
+                <AlertDialogAction onClick={() => { actions.reset().then(() => toast("All data cleared")).catch(() => toast.error("Couldn't reset your data. Please try again.")); }}>Reset</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </Row>
       </section>
 
+      <Button variant="secondary" onClick={signOut} className="h-12 w-full rounded-2xl font-bold"><LogOut className="size-4" />Sign out</Button>
+
       <section className="card-surface p-5">
         <div className="flex items-center gap-3">
           <Info className="size-5 text-muted-foreground" />
           <div>
             <div className="font-display font-bold">HabitFlow 1.0</div>
-            <div className="text-sm text-muted-foreground">Your data stays on this device. Add HabitFlow to your home screen for an app-like experience.</div>
+            <div className="text-sm text-muted-foreground">Your habits are saved securely to your account and sync across devices. Add HabitFlow to your home screen for an app-like experience.</div>
           </div>
         </div>
       </section>

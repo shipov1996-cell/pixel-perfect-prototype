@@ -2,8 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { BarChart3, CalendarCheck2, ListTodo, Settings, Trophy, Waves } from "lucide-react";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import { hydrate, onAchievementUnlock, useAppState, useHydrated } from "@/lib/habits/store";
+import { hydrate, onAchievementUnlock, useAppState, useHydrated, useLoadError } from "@/lib/habits/store";
 import { ACHIEVEMENTS } from "@/lib/habits/achievements";
 import { HabitIcon } from "@/lib/habits/icons";
 
@@ -32,8 +31,9 @@ function useThemeSync() {
   }, [settings.theme, ready]);
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({ children, userId }: { children: ReactNode; userId: string }) {
   const ready = useHydrated();
+  const loadError = useLoadError();
   useEffect(() => {
     onAchievementUnlock((ids) => {
       ids.forEach((id) => {
@@ -54,8 +54,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         );
       });
     });
-    hydrate();
   }, []);
+  useEffect(() => { void hydrate(userId); }, [userId]);
   useThemeSync();
 
   return (
@@ -77,7 +77,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pt-[max(env(safe-area-inset-top),1.25rem)] pb-28 sm:px-6 md:pb-12 md:pt-10">
-        {ready ? children : <div className="space-y-4 pt-4">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-3xl bg-muted" />)}</div>}
+        {ready ? children : loadError ? (
+          <div className="card-surface mt-10 p-6 text-center">
+            <p className="font-bold">{loadError}</p>
+            <button onClick={() => void hydrate(userId)} className="mt-4 h-11 rounded-full bg-primary px-6 font-bold text-primary-foreground">Try again</button>
+          </div>
+        ) : <div className="space-y-4 pt-4">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-3xl bg-muted" />)}</div>}
       </main>
 
       <nav aria-label="Main" className="glass pb-safe fixed inset-x-0 bottom-0 z-40 border-t md:hidden">
@@ -93,7 +98,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </div>
       </nav>
-      <Toaster position="top-center" />
     </div>
   );
 }
